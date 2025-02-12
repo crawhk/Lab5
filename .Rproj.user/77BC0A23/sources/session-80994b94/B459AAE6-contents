@@ -95,6 +95,8 @@ MUTATE!
 
 ### Exercise 6
 
+> Calculate the distances between all pairs of Denny’s and La Quinta locations and save this variable as distance. Make sure to save this variable in THE dn_lq_ak data frame, so that you can use it later.
+
 ```{r}
 haversine <- function(long1, lat1, long2, lat2, round = 3) {
   # convert to radians
@@ -113,7 +115,7 @@ haversine <- function(long1, lat1, long2, lat2, round = 3) {
 ```
 
 ```{r}
-dn_lq_ak_distance <- dn_lq_ak %>% 
+dn_lq_ak_distance <-  dn_lq_ak%>%
   mutate(
     distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
   )
@@ -121,17 +123,88 @@ dn_lq_ak_distance <- dn_lq_ak %>%
 
 ### Exercise 7
 
+> Calculate the minimum distance between a Denny’s and La Quinta for each Denny’s location. To do so we group by Denny’s locations and calculate a new variable that stores the information for the minimum distance.
+
+```{r}
+dn_lq_ak_min <- dn_lq_ak_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+```
 
 ### Exercise 8
+
+> Describe the distribution of the distances Denny’s and the nearest La Quinta locations in Alaska. Also include an appropriate visualization and relevant summary statistics. 
+
+
+```{r}
+datasum_ak <- dn_lq_ak_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_ak)
+```
+```{r}
+ggp
+```
 
 
 ### Exercise 9
 
+> Repeat the same analysis for North Carolina: (i) filter Denny’s and La Quinta Data Frames for NC, (ii) join these data frames to get a complete list of all possible pairings, (iii) calculate the distances between all possible pairings of Denny’s and La Quinta in NC, (iv) find the minimum distance between each Denny’s and La Quinta location, (v) visualize and describe the distribution of these shortest distances using appropriate summary statistics.
+
+```{r}
+dn_nc <- dennys %>% 
+  filter(state == "NC")
+nrow(dn_nc)
+```
+
+```{r}
+lq_nc <- laquinta %>% 
+  filter(state == "NC")
+nrow(lq_nc)
+```
+```{r}
+dn_lq_nc <- full_join(dn_nc, lq_nc, by = "state")
+```
+```{r}
+dn_lq_nc
+```
+```{r}
+dn_lq_nc_distance <-  dn_lq_nc %>%
+  mutate(
+    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
+  )
+```
+
+
+```{r}
+dn_lq_nc_min <- dn_lq_nc_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+```
+
+
+
+
 
 ### Exercise 10
+
+> Repeat the same analysis for Texas.
 
 
 ### Exercise 11
 
+> Repeat the same analysis for a state of your choosing, different than the ones we covered so far.
+
+
 
 ### Exercise 12
+
+> Among the states you examined, where is Mitch Hedberg’s joke most likely to hold true? Explain your reasoning.
+
+
+
