@@ -335,6 +335,8 @@ dn_lq_va_distance %>% ggplot() +
   geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
   labs(title = "Dennys and La Quintas in VA", y = "latitude", x = "longitude")
 ```
+
+
 ### Exercise 12
 
 > Among the states you examined, where is Mitch Hedberg’s joke most likely to hold true? Explain your reasoning.

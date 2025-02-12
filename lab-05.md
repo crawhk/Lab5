@@ -184,15 +184,29 @@ datasum_ak <- dn_lq_ak_distance %>%
   summarise(
     mean_distance = mean(distance, na.rm = TRUE),
     max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
     count = n()
   )
 print(datasum_ak)
 ```
 
-    ## # A tibble: 1 × 3
-    ##   mean_distance max_distance count
-    ##           <dbl>        <dbl> <int>
-    ## 1         5813.        6152.     6
+    ## # A tibble: 1 × 4
+    ##   mean_distance max_distance min_distance count
+    ##           <dbl>        <dbl>        <dbl> <int>
+    ## 1         5813.        6152.        5358.     6
+
+``` r
+library(tidyverse)
+```
+
+``` r
+dn_lq_ak_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .5) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .5) + 
+  labs(title = "Dennys and La Quintas in AK", y = "latitude", x = "longitude")
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ### Exercise 9
 
@@ -263,16 +277,221 @@ dn_lq_nc_min <- dn_lq_nc_distance %>%
   summarize(closest = min(distance))
 ```
 
+``` r
+datasum_nc <- dn_lq_nc_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_nc)
+```
+
+    ## # A tibble: 1 × 4
+    ##   mean_distance max_distance min_distance count
+    ##           <dbl>        <dbl>        <dbl> <int>
+    ## 1         9654.        9855.        9483.   336
+
+``` r
+dn_lq_nc_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in NC", y = "latitude", x = "longitude")
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
 ### Exercise 10
 
 > Repeat the same analysis for Texas.
 
+``` r
+dn_tx <- dennys %>% 
+  filter(state == "TX")
+nrow(dn_tx)
+```
+
+    ## [1] 200
+
+``` r
+lq_tx <- laquinta %>% 
+  filter(state == "TX")
+nrow(lq_tx)
+```
+
+    ## [1] 237
+
+``` r
+dn_lq_tx <- full_join(dn_tx, lq_tx, by = "state")
+```
+
+    ## Warning in full_join(dn_tx, lq_tx, by = "state"): Detected an unexpected many-to-many relationship between `x` and `y`.
+    ## ℹ Row 1 of `x` matches multiple rows in `y`.
+    ## ℹ Row 1 of `y` matches multiple rows in `x`.
+    ## ℹ If a many-to-many relationship is expected, set `relationship =
+    ##   "many-to-many"` to silence this warning.
+
+``` r
+dn_lq_tx
+```
+
+    ## # A tibble: 47,400 × 11
+    ##    address.x    city.x state zip.x longitude.x latitude.x address.y city.y zip.y
+    ##    <chr>        <chr>  <chr> <chr>       <dbl>      <dbl> <chr>     <chr>  <chr>
+    ##  1 120 East I-… Abile… TX    79601       -99.6       32.4 3018 Cat… "\nAb… 79606
+    ##  2 120 East I-… Abile… TX    79601       -99.6       32.4 3501 Wes… "\nAb… 79601
+    ##  3 120 East I-… Abile… TX    79601       -99.6       32.4 14925 La… "\nAd… 75254
+    ##  4 120 East I-… Abile… TX    79601       -99.6       32.4 909 East… "\nAl… 78516
+    ##  5 120 East I-… Abile… TX    79601       -99.6       32.4 2400 Eas… "\nAl… 78332
+    ##  6 120 East I-… Abile… TX    79601       -99.6       32.4 1220 Nor… "\nAl… 75013
+    ##  7 120 East I-… Abile… TX    79601       -99.6       32.4 1165 Hwy… "\nAl… 76009
+    ##  8 120 East I-… Abile… TX    79601       -99.6       32.4 880 Sout… "\nAl… 77511
+    ##  9 120 East I-… Abile… TX    79601       -99.6       32.4 1708 Int… "\nAm… 79103
+    ## 10 120 East I-… Abile… TX    79601       -99.6       32.4 9305 Eas… "\nAm… 79118
+    ## # ℹ 47,390 more rows
+    ## # ℹ 2 more variables: longitude.y <dbl>, latitude.y <dbl>
+
+``` r
+dn_lq_tx_distance <-  dn_lq_tx %>%
+  mutate(
+    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
+  )
+```
+
+``` r
+dn_lq_tx_min <- dn_lq_tx_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+``` r
+datasum_tx <- dn_lq_tx_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_nc)
+```
+
+    ## # A tibble: 1 × 4
+    ##   mean_distance max_distance min_distance count
+    ##           <dbl>        <dbl>        <dbl> <int>
+    ## 1         9654.        9855.        9483.   336
+
+``` r
+dn_lq_tx_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in TX", y = "latitude", x = "longitude")
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
 ### Exercise 11
 
 > Repeat the same analysis for a state of your choosing, different than
-> the ones we covered so far.
+> the ones we covered so far. (VA)
 
-### Exercise 12
+``` r
+dn_va <- dennys %>% 
+  filter(state == "VA")
+nrow(dn_va)
+```
+
+    ## [1] 28
+
+``` r
+lq_va <- laquinta %>% 
+  filter(state == "VA")
+nrow(lq_va)
+```
+
+    ## [1] 14
+
+``` r
+dn_lq_va <- full_join(dn_va, lq_va, by = "state")
+```
+
+    ## Warning in full_join(dn_va, lq_va, by = "state"): Detected an unexpected many-to-many relationship between `x` and `y`.
+    ## ℹ Row 1 of `x` matches multiple rows in `y`.
+    ## ℹ Row 1 of `y` matches multiple rows in `x`.
+    ## ℹ If a many-to-many relationship is expected, set `relationship =
+    ##   "many-to-many"` to silence this warning.
+
+``` r
+dn_lq_va
+```
+
+    ## # A tibble: 392 × 11
+    ##    address.x    city.x state zip.x longitude.x latitude.x address.y city.y zip.y
+    ##    <chr>        <chr>  <chr> <chr>       <dbl>      <dbl> <chr>     <chr>  <chr>
+    ##  1 7214 Richmo… Alexa… VA    22306       -77.1       38.8 1803 Emm… "\nCh… 22901
+    ##  2 7214 Richmo… Alexa… VA    22306       -77.1       38.8 3320 Can… "\nLy… 24502
+    ##  3 7214 Richmo… Alexa… VA    22306       -77.1       38.8 6950 Nov… "\nMa… 20109
+    ##  4 7214 Richmo… Alexa… VA    22306       -77.1       38.8 1387 Nor… "\nNo… 23502
+    ##  5 7214 Richmo… Alexa… VA    22306       -77.1       38.8 192 Newt… "\nVi… 23462
+    ##  6 7214 Richmo… Alexa… VA    22306       -77.1       38.8 1450 Tyl… "\nRa… 24141
+    ##  7 7214 Richmo… Alexa… VA    22306       -77.1       38.8 1301 Hug… "\nMi… 23113
+    ##  8 7214 Richmo… Alexa… VA    22306       -77.1       38.8 16280 In… "\nDo… 23047
+    ##  9 7214 Richmo… Alexa… VA    22306       -77.1       38.8 9040 Pam… "\nRi… 23237
+    ## 10 7214 Richmo… Alexa… VA    22306       -77.1       38.8 140 Sher… "\nSa… 24153
+    ## # ℹ 382 more rows
+    ## # ℹ 2 more variables: longitude.y <dbl>, latitude.y <dbl>
+
+``` r
+dn_lq_va_distance <-  dn_lq_va %>%
+  mutate(
+    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
+  )
+```
+
+``` r
+dn_lq_va_min <- dn_lq_va_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+``` r
+datasum_va <- dn_lq_va_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_va)
+```
+
+    ## # A tibble: 1 × 4
+    ##   mean_distance max_distance min_distance count
+    ##           <dbl>        <dbl>        <dbl> <int>
+    ## 1         9330.        9615.        9190.   392
+
+``` r
+dn_lq_va_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in VA", y = "latitude", x = "longitude")
+```
+
+![](lab-05_files/figure-gfm/unnamed-chunk-34-1.png)<!-- --> \###
+Exercise 12
 
 > Among the states you examined, where is Mitch Hedberg’s joke most
 > likely to hold true? Explain your reasoning.
+
+AK: If you are at a La Quintas you could find a Dennys within a short
+drive
+
+NC: La Quintas does mean next to Dennys, but Dennys does not mean next
+to La Quintas
+
+TX: Texas is plagued with La Quintas and Dennys
+
+VA: If you are in a La Quintas you are very likely to be next to a
+Dennys
+
+The joke is most likely to hold true in TX!
