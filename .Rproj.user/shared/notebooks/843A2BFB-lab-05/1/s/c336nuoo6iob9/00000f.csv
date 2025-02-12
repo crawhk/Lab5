@@ -1,0 +1,4 @@
+"0","dn_lq_va_distance <-  dn_lq_va %>%"
+"0","  mutate("
+"0","    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)"
+"0","  )"

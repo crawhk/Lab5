@@ -1,0 +1,4 @@
+"0","dn_lq_nc_min <- dn_lq_nc_distance %>%"
+"0","  group_by(address.x) %>%"
+"0","  summarize(closest = min(distance))"
+"0",""

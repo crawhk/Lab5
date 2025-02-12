@@ -1,0 +1,4 @@
+"0","dn_lq_ak_distance %>% ggplot() + "
+"0","  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = ""Dennys"", size = distance), alpha = .5) +"
+"0","  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = ""La Quintas"", size = distance), alpha = .5) + "
+"0","  labs(title = ""Dennys and La Quintas in AK"", y = ""latitude"", x = ""longitude"")"

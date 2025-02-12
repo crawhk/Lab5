@@ -142,9 +142,21 @@ datasum_ak <- dn_lq_ak_distance %>%
   summarise(
     mean_distance = mean(distance, na.rm = TRUE),
     max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
     count = n()
   )
 print(datasum_ak)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+dn_lq_ak_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .5) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .5) + 
+  labs(title = "Dennys and La Quintas in AK", y = "latitude", x = "longitude")
 ```
 
 
@@ -163,12 +175,15 @@ lq_nc <- laquinta %>%
   filter(state == "NC")
 nrow(lq_nc)
 ```
+
 ```{r}
 dn_lq_nc <- full_join(dn_nc, lq_nc, by = "state")
 ```
+
 ```{r}
 dn_lq_nc
 ```
+
 ```{r}
 dn_lq_nc_distance <-  dn_lq_nc %>%
   mutate(
@@ -185,7 +200,22 @@ dn_lq_nc_min <- dn_lq_nc_distance %>%
 ```
 
 
-
+```{r}
+datasum_nc <- dn_lq_nc_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_nc)
+```
+```{r}
+dn_lq_nc_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in NC", y = "latitude", x = "longitude")
+```
 
 
 ### Exercise 10
@@ -193,15 +223,131 @@ dn_lq_nc_min <- dn_lq_nc_distance %>%
 > Repeat the same analysis for Texas.
 
 
+```{r}
+dn_tx <- dennys %>% 
+  filter(state == "TX")
+nrow(dn_tx)
+```
+
+```{r}
+lq_tx <- laquinta %>% 
+  filter(state == "TX")
+nrow(lq_tx)
+```
+
+```{r}
+dn_lq_tx <- full_join(dn_tx, lq_tx, by = "state")
+```
+
+```{r}
+dn_lq_tx
+```
+
+```{r}
+dn_lq_tx_distance <-  dn_lq_tx %>%
+  mutate(
+    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
+  )
+```
+
+
+```{r}
+dn_lq_tx_min <- dn_lq_tx_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+```
+
+
+```{r}
+datasum_tx <- dn_lq_tx_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_nc)
+```
+
+```{r}
+dn_lq_tx_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in TX", y = "latitude", x = "longitude")
+```
+
 ### Exercise 11
 
-> Repeat the same analysis for a state of your choosing, different than the ones we covered so far.
+> Repeat the same analysis for a state of your choosing, different than the ones we covered so far. (VA)
+
+```{r}
+dn_va <- dennys %>% 
+  filter(state == "VA")
+nrow(dn_va)
+```
+
+```{r}
+lq_va <- laquinta %>% 
+  filter(state == "VA")
+nrow(lq_va)
+```
 
 
+```{r}
+dn_lq_va <- full_join(dn_va, lq_va, by = "state")
+```
 
+```{r}
+dn_lq_va
+```
+
+```{r}
+dn_lq_va_distance <-  dn_lq_va %>%
+  mutate(
+    distance = haversine(lat1 = latitude.x, long1 = longitude.x, lat2 = latitude.y, long2 = latitude.y)
+  )
+```
+
+
+```{r}
+dn_lq_va_min <- dn_lq_va_distance %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+
+```
+
+```{r}
+datasum_va <- dn_lq_va_distance %>% 
+  summarise(
+    mean_distance = mean(distance, na.rm = TRUE),
+    max_distance = max(distance, na.rm = TRUE),
+    min_distance = min(distance, na.rm = TRUE),
+    count = n()
+  )
+print(datasum_va)
+```
+
+
+```{r}
+dn_lq_va_distance %>% ggplot() + 
+  geom_jitter(aes(x =  longitude.x, y = latitude.x, color = "Dennys", size = distance), alpha = .1) +
+  geom_jitter(aes(x =  longitude.y, y = latitude.y, color = "La Quintas", size = distance), alpha = .1) + 
+  labs(title = "Dennys and La Quintas in VA", y = "latitude", x = "longitude")
+```
 ### Exercise 12
 
 > Among the states you examined, where is Mitch Hedberg’s joke most likely to hold true? Explain your reasoning.
+
+AK: If you are at a La Quintas you could find a Dennys within a short drive 
+
+NC: La Quintas does mean next to Dennys, but Dennys does not mean next to La Quintas 
+
+TX: Texas is plagued with La Quintas and Dennys
+
+VA: If you are in a La Quintas you are very likely to be next to a Dennys
+
+The joke is most likely to hold true in TX! 
 
 
 
